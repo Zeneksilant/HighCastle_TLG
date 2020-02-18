@@ -17,18 +17,39 @@ public class HighCastle extends ApplicationAdapter {
 	Sprite sprite;
 	Sprite bg;
 	OrthographicCamera camera;
-	final float WORLD_WIDTH = 720;
-	final float WORLD_HEIGHT = 1280;
+	Texture texture;
+
+	public float Xposition;
+	public float Yposition;
+
+	private float w,h;
+
+	final float WORLD_WIDTH = 1920;
+	final float WORLD_HEIGHT = 1080;
 
 	@Override
 	public void create () {
 	batch = new SpriteBatch();
+
 	camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	camera.translate(camera.viewportWidth/2, camera.viewportHeight/2);
+
 	sprite = new Sprite(new Texture(Gdx.files.internal("Samurai1.png")));
 	bg = new Sprite(new Texture(Gdx.files.internal("firstroom.png")));
+
 	bg.setSize(WORLD_WIDTH, WORLD_HEIGHT);
 	float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
+
+		sprite.setPosition(350, 200);
+		sprite.setSize(380, 400);
+
+		w = Gdx.graphics.getWidth();
+		h = Gdx.graphics.getWidth();
+
+		Xposition = 500;
+		Yposition = 500;
+
+		GameManager.initialize(w, h);
 	}
 
 	@Override
@@ -37,10 +58,16 @@ public class HighCastle extends ApplicationAdapter {
 	Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 	camera.update();
 
+		batch.setProjectionMatrix(camera.combined);
+		InputManager.handleInput(camera, sprite);
+
 	batch.begin();
+
 	batch.setProjectionMatrix(camera.combined);
 	bg.draw(batch);
 	sprite.draw(batch);
+	GameManager.renderGame(batch);
+
 	batch.end();
 	}
 	
@@ -48,5 +75,6 @@ public class HighCastle extends ApplicationAdapter {
 	public void dispose () {
 	bg.getTexture().dispose();
 	sprite.getTexture().dispose();
+	GameManager.dispose();
 	}
 }
