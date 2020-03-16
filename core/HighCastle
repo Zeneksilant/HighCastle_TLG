@@ -6,65 +6,87 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class HighCastle extends ApplicationAdapter {
 	// создаём спрайт и т.д
 	SpriteBatch batch;
 	Sprite sprite;
 	Texture texture;
+
 	// создаём камеру
 	OrthographicCamera camera;
+
 	// создаём музыку
 	Music CastleMusic;
+
 	// местоположения
 	public float Xposition;
 	public float Yposition;
+
 	// ширина / высота
 	private float w,h;
+
 	// ширина / высота мира
 	public static final int WORLD_WIDTH = 1920;
-	public static final int WORLD_HEIGHT = 1040;
+	public static final int WORLD_HEIGHT = 1080;
 	// название приложения
 	public static final String TITLE = "High Castle";
+
 	// создаём карту TMX
 	public TmxMapLoader mapLoader;
 	public TiledMap map1;
 	public OrthogonalTiledMapRenderer tiledMapRenderer;
 
+	// создаём viewport
+	Viewport viewport;
+
 	@Override
 	public void create () {
 
 	batch = new SpriteBatch();
-	// централизируем камеру
+
+	// ставим карту так, чтобы (0;0) была в НЛ углу
 	camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 	camera.translate(camera.viewportWidth/2, camera.viewportHeight/2);
+
 	// загружаем текстурки и музыку
 	sprite = new Sprite(new Texture(Gdx.files.internal("Samurai1.png")));
 	CastleMusic = Gdx.audio.newMusic(Gdx.files.internal("BoxMusic1.mp3"));
-	// устонавливаем размеры экрана
-	float aspectRatio = (float)Gdx.graphics.getHeight()/(float)Gdx.graphics.getWidth();
+
 	// создаём справйта
 		sprite.setPosition(350, 200);
-		sprite.setSize(380, 400);
-	// определяем ширину / высоту
+		sprite.setSize(180, 200);
+
+		// определяем ширину / высоту
 		w = Gdx.graphics.getWidth();
 		h = Gdx.graphics.getWidth();
-	// местоположение
+
+		// местоположение
 		Xposition = 500;
 		Yposition = 500;
-	// играем музыку
+
+		// устанавливаем viewport
+		viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+		viewport.apply();
+
+		// играем музыку
 	//	CastleMusic.setLooping(true);
 	//	CastleMusic.play();
-	// загружаем карту
+
+		// загружаем карту
 		mapLoader = new TmxMapLoader();
-		map1 = mapLoader.load("firstlocation.tmx");
+		map1 = mapLoader.load("secondlocation(Z).tmx");
 		tiledMapRenderer = new OrthogonalTiledMapRenderer(map1);
+
 
 		GameManager.initialize(w, h);
 	}
@@ -73,10 +95,12 @@ public class HighCastle extends ApplicationAdapter {
 	public void render () {
 	Gdx.gl.glClearColor(0, 0, 0, 1);
 	Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 	// обновляем камеру
 	camera.update();
+
 	// рендерим карту
-		tiledMapRenderer.setView(camera);
+	tiledMapRenderer.setView(camera);
 		tiledMapRenderer.render();
 
 		batch.setProjectionMatrix(camera.combined);
@@ -85,13 +109,14 @@ public class HighCastle extends ApplicationAdapter {
 	batch.begin();
 
 	batch.setProjectionMatrix(camera.combined);
-	// рисуем спрайта
+
+	// рисуем спрайтбач
 	sprite.draw(batch);
 	GameManager.renderGame(batch);
 
 	batch.end();
 	}
-	
+
 	@Override
 	public void dispose () {
 	sprite.getTexture().dispose();
