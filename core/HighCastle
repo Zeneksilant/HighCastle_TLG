@@ -17,6 +17,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class HighCastle extends ApplicationAdapter {
+
 	// создаём спрайт и т.д
 	SpriteBatch batch;
 	Sprite sprite;
